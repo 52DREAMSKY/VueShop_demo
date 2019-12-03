@@ -1,12 +1,11 @@
 <template>
 	<div class="login">
 		<div class="login-box">
-			<div class="login-img"><img src="../assets/logo.jpg"/></div>
+			<div class="login-img"><img src="../assets/avatar.jpg"/></div>
 			
 			<el-form class="login-el" :model="loginForm" :rules="loginRules" ref="loginRules" onsubmit="return false">
 			  <el-form-item prop="username">
 			    <el-input prefix-icon="iconfont icon-user_name" v-model="loginForm.username">
-			    	
 			    </el-input>
 			  </el-form-item>
 			  
@@ -106,12 +105,5 @@
 	.login-elrow {
 		display: flex;
 		justify-content: center;
-	}
-	.icon {
-		width: 1em;
-		height: 1em;
-		vertical-align: -0.15em;
-		fill: currentColor;
-		overflow: hidden;
 	}
 </style>
