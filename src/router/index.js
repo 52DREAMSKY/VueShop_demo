@@ -4,7 +4,7 @@ Vue.use(VueRouter);
 import login from '../components/Login.vue'
 import Home from '../components/Home.vue'
 import Welcome from '../components/Welcome.vue'
-import User from '../components/user/User.vue'
+import Users from '../components/users/Users.vue'
 
 const routes = [
 	{path:'/',redirect:'/login'},
@@ -15,13 +15,23 @@ const routes = [
 		redirect:'/welcome',
 		children:[
 			{path:'/welcome',component:Welcome},
-			{path:"/user",component:User},
+			{path:"/users",component:Users},
 		]
 	},
 ]
 
 const router = new VueRouter({
   routes
+})
+
+// 路由导航守卫
+router.beforeEach((to,from,next)=>{
+	// 如果是用户要登录login页面，没必要做任何验证，直接路由
+	if(to.path == '/login') return next()
+	// 获取 token 令牌
+	const tokenStr = window.sessionStorage.getItem('token');
+	if(!tokenStr) return next('/login')
+	next();
 })
 
 export default router;

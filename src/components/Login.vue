@@ -8,31 +8,26 @@
 			    <el-input prefix-icon="iconfont icon-user_name" v-model="loginForm.username">
 			    </el-input>
 			  </el-form-item>
-			  
 			  <el-form-item prop="password" >
 			    <el-input prefix-icon="iconfont icon-password" v-model="loginForm.password" show-password ></el-input>
-		
 			  </el-form-item>
-			  
 			  <el-row class="login-elrow">
-				  
-				  <el-button type="primary" @click="denglu">提交</el-button>
-				
-				  <el-button type="danger" @click="chongzhi">重置</el-button>
+				  <el-button type="danger" @click="denglu">提交</el-button>
+				  <el-button type="info" @click="chongzhi">重置</el-button>
 				</el-row>
-							
 			</el-form>
 		</div>
 	</div>
 </template>
 
 <script>
+// import { async } from 'q';
 	export default {
 		data(){
 			return {
 				loginForm:{
-					username:'',
-					password:''
+					username:'admin',
+					password:'123456'
 				},
 				loginRules:{
 					username: [
@@ -50,24 +45,41 @@
 			//登录事件
 			denglu(){
 //				进行预验证
-				this.$refs.loginRules.validate((valid) => {
+				this.$refs.loginRules.validate( async valid => {
+					// 输入正确之后结果是一个布尔值true
+					// console.log(valid)
 					
+					// 验证错误 不等于返回的值 !valid
+					if (!valid) return this.$message.error('登录失败，请重新登录');
+
+					// 第一种写法
+					// 如果我们上面通过了，本地预验证后，正式发送验证请求，与后台 api 进行验证
+					// const res =  this.$http.post('login',this.loginForm);
 					
-					console.log(valid)//输入正确之后结果是一个布尔值true
-			          if (!valid) {
-			          	return this.$message.error('登录失败，请重新登录')		            
-			          } 
-			         
-			         this.$message.success('登录成功~~~~~~~')	
-			         this.$router.push('/home')
+					// this.$http.post('login',this.loginForm).then(function(res){
+					// 	console.log(res)
+					// })
+
+					// es6 中 对象的解构赋值
+					const {data:res} = await this.$http.post('login',this.loginForm);
+					// console.log(res)
+					// 验证这个用户名和密码是都是已经注册过了，如果没有注册，依然无法登录
+					if( res.meta.status != 200 ) return this.$message.error(res.meta.msg);
+					
+					// 存储 token 秘钥到 本地临时存储 sessionStorage 
+					window.sessionStorage.setItem('token',res.data.token);
+					
+					// 登录成功提示
+					this.$message.success('登录成功(＾Ｕ＾)ノ~ＹＯ~~~~')
+					
+					// 登录成功了，跳转到 home 页面
+			        this.$router.push('/home')
 			    });
 			},
-			//重置
+			// 重置表单
 			chongzhi(){
 				this.$refs.loginRules.resetFields()
-				 
 			}
-			
 		}
 	}
 </script>

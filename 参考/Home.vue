@@ -8,6 +8,8 @@
 					<img src="../assets/logo.jpg" class="home-logo" />
 					<span>电商后天管理系统</span>
 				</div>
+				<el-button type='success' class='exitBtn' @click='homeExit'>退出登录</el-button>
+				
 			</el-header>
 			<!--主体内容-->
 			<el-container>
@@ -21,53 +23,21 @@
 						collapse-transition动画的开启关闭
 						router 开启点击跳转路由模式
 					-->
-					<el-menu 
-					background-color="#545c64" 
-					text-color="#fff" 
-					active-text-color="#ffd04b" 
-					:unique-opened="true" 
-					:collapse="flag" 
-					:collapse-transition="false" 
-					router>
-						
-						<el-submenu index="1">
+					<el-menu background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :unique-opened="true" :collapse="flag" :collapse-transition="false" router>
+						<el-submenu :index="item.id + ''" v-for='item in menuLists' :key='item.id'>
 							<template slot="title">
 								<!--一级菜单的图标-->
-								<i class="el-icon-location"></i>
+								<i :class="iconObj[item.id]"></i>
 								<!--一级菜单的文字内容-->
-								<span>用户管理</span>
+								<span>{{item.authName}}</span>
 							</template>
-							<el-menu-item index="user">
+							<el-menu-item :index="subItem.path" v-for='subItem in item.children' :key='subItem.id'>
 								<template slot="title">
 									<i class="el-icon-menu"></i>
-									<span>用户列表</span>
+									<span>{{subItem.authName}}</span>
 							</template>
 							</el-menu-item>
 						</el-submenu>
-						
-						<!--第二个-->
-						<el-submenu index="2">
-							<template slot="title">
-								<!--一级菜单的图标-->
-								<i class="el-icon-menu"></i>
-								<!--一级菜单的文字内容-->
-								<span>权限管理</span>
-							</template>
-							<el-menu-item index="2-1">
-								<template slot="title">
-									<i class="el-icon-menu"></i>
-									<span>角色列表</span>
-							</template>
-							</el-menu-item>
-							<el-menu-item index="2-2">
-								<template slot="title">
-									<i class="el-icon-menu"></i>
-									<span>权限列表</span>
-							</template>
-							</el-menu-item>
-						</el-submenu>
-						
-						
 					</el-menu>
 				</el-aside>
 				<!--右边的主要内容区-->
@@ -84,13 +54,42 @@
 	export default {
 		data(){
 			return {
-				flag:false
+				flag:false,
+				//存储侧边栏列表的数据
+				menuLists:[],
+				iconObj:{
+					125:'iconfont icon-yonghuguanli',
+					103:'iconfont icon-quanxianguanli',
+					101:'iconfont icon-Goodgoods',
+					102:'iconfont icon-icon',
+					145:'iconfont icon-icon-test'
+				}
 			}
 		},
+		created(){
+				//调用获取数据的方法
+				this.getMenuList()
+		},
 		methods:{
+			//页面加载完成就应该获取数据,发送ajax请求
+			
 			toggle(){
 				this.flag = ! this.flag
 			},
+			//退出按钮事件
+			homeExit(){
+				//清除本地存储的token
+				window.sessionStorage.clear();
+				//让页面到login
+				this.$router.push('/login');
+			},
+			//获取数据的方法
+			async getMenuList(){
+				const {data:res} = await this.$http.get('menus')
+				console.log( res.data )
+				if(res.meta.status != 200) return this.$message.error(res.meta.msg)
+				this.menuLists = res.data;
+			}
 		}
 	}
 </script>
@@ -108,8 +107,16 @@
 	.el-header {
 		background-color: orange;
 		padding-left: 0;
+		position: relative;
 	}
-	
+	.exitBtn {
+		position: absolute;
+		right: 20px;
+		top: 10px;
+	}
+	.iconfont  {
+		margin-right: 5px;
+	}
 	.home-logo {
 		height: 60px;
 		width: 60px;

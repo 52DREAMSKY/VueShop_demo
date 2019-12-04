@@ -77,12 +77,6 @@
                 </el-col>
             </el-row>
             
-
-            
-
-
-
-            
         </el-card>
     </div>
 </template>
