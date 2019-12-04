@@ -4,8 +4,7 @@ import router from './router'
 import '../public/login.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
-import '../public/font/iconfont.css'
-import '../public/font/iconfont.js'
+import ''
 import axios from 'axios'
 
 Vue.config.productionTip = false

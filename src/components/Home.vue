@@ -5,10 +5,11 @@
 				<el-row :gutter="20" justify="space-between">
 					<el-col :span="16">
 						<div class="logo">
-							<a href="welcome"><img src="../assets/logo.png"></a>
+							<img src="../assets/logo.png">
 						</div>
 					</el-col>
 					<el-col class="header-right" :span="8">
+						<el-button @click="exitBtn" type="danger" icon="el-icon-close" round  align="middle" justify="end">登出后台</el-button>
 					</el-col>	
 				</el-row>
 
@@ -27,39 +28,21 @@
 					:collapse="flag" 
 					:collapse-transition="false" 
 					router>
-					<!-- 第一个导航选项 -->
-					<el-submenu index="1">
+
+					<!-- 导航选项 -->
+					<el-submenu :index="item.id+''" v-for="item in menuLists" :key="item.id">
 						<template slot="title">
-							<i class="el-icon-location"></i>
-							<span>用户管理</span>
+							<!-- 一级菜单标题图标 -->
+							<i :class="listIcon[item.id]"></i>
+							<span>{{item.authName}}</span>
 						</template>
-						<el-menu-item index="users">
+						<el-menu-item :index="subItem.path+''" v-for="subItem in item.children" :key="subItem.id">
 							<template slot="title">
-								<i class="el-icon-menu"></i>
-								<span>用户列表</span>
+								<span>{{subItem.authName}}</span>
 						</template>
 						</el-menu-item>
 					</el-submenu>
-					
-					<!-- 第二个导航选项 -->
-					<el-submenu index="2">
-						<template slot="title">
-							<i class="el-icon-menu"></i>
-							<span>权限管理</span>
-						</template>
-						<el-menu-item index="2-1">
-							<template slot="title">
-								<i class="el-icon-menu"></i>
-								<span>角色列表</span>
-						</template>
-						</el-menu-item>
-						<el-menu-item index="2-2">
-							<template slot="title">
-								<i class="el-icon-menu"></i>
-								<span>权限列表</span>
-						</template>
-						</el-menu-item>
-					</el-submenu>
+
 					</el-menu>
 				</el-aside>
 				<el-main>
@@ -74,14 +57,39 @@
 	export default {
 	    data() {
 	      return {
-			flag:false
+			flag:false,
+			menuLists:[],
+			listIcon:{
+				125:"",
+				103:"",
+				101:"",
+				102:"",
+				145:"",
+			}
 	      }
+		},
+		// 生命周期函数，页面加载完成后，加载渲染内容数据
+		created(){
+			this.getMenulist();
 		},
 		methods:{
 			toggle(){
 				this.flag =! this.flag
+			},
+			// 退出后台事件
+			exitBtn(){
+				window.sessionStorage.clear();
+				this.$router.push('/login');
+			},
+			// 获取数据侧边栏，列表数据项
+			async getMenulist(){
+				const {data:res} = await this.$http.get('menus');
+				console.log(res.data)
+				if(res.meta.status != 200) return this.$message.error(res.meta.msg)
+				this.menuLists = res.data;
 			}
 		}
+		
   }
 </script>
 <style>
@@ -122,7 +130,11 @@
 		background: none!important;
 	}
 	.header-right{
-		/* text-align: right */
+		display: flex;
+		justify-content: flex-end;
+	}
+	.header-right .el-button{
+		margin: 10px 0;
 	}
 	.el-aside{
 		height: 100%;
