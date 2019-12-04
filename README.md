@@ -1,19 +1,19 @@
 # vue-shopping01
 
-## Project setup
+## 项目设置
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 编译和热重新加载以进行开发
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 编译和缩小以供生产
 ```
 npm run build
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 自定义配置
+见 [配置参考](https://cli.vuejs.org/config/)
