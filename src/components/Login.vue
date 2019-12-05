@@ -2,7 +2,6 @@
 	<div class="login">
 		<div class="login-box">
 			<div class="login-img"><img src="../assets/avatar.jpg"/></div>
-			
 			<el-form class="login-el" :model="loginForm" :rules="loginRules" ref="loginRules" onsubmit="return false">
 			  <el-form-item prop="username">
 			    <el-input prefix-icon="iconfont icon-user_name" v-model="loginForm.username">
@@ -88,7 +87,7 @@
 	.login-box {
 		width: 400px;
 		height: 320px;
-		background-color: #FFECEC;
+		background-color: #fff;
 	
 		position: absolute;
 		left: 50%;

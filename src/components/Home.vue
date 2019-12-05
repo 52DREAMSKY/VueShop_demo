@@ -18,7 +18,6 @@
 				<!--左边侧边栏-->
 				<el-aside :width="flag?'64px':'200px'" >
 					<div class="home-toggle" @click="toggle">
-
 					</div>
 					<el-menu 
 					background-color="#545c64" 
@@ -28,7 +27,7 @@
 					:collapse="flag" 
 					:collapse-transition="false" 
 					router>
-
+					<el-button size="mini" @click="toggle"  type="danger" icon="el-icon-s-fold"></el-button>
 					<!-- 导航选项 -->
 					<el-submenu :index="item.id+''" v-for="item in menuLists" :key="item.id">
 						<template slot="title">
@@ -60,11 +59,11 @@
 			flag:false,
 			menuLists:[],
 			listIcon:{
-				125:"",
-				103:"",
-				101:"",
-				102:"",
-				145:"",
+				125:"iconfont icon-yonghuguanli",
+				103:"iconfont icon-quanxianguanli",
+				101:"iconfont icon-xiazai",
+				102:"iconfont icon-dingdanguanli",
+				145:"iconfont icon-data_tool",
 			}
 	      }
 		},
@@ -84,7 +83,7 @@
 			// 获取数据侧边栏，列表数据项
 			async getMenulist(){
 				const {data:res} = await this.$http.get('menus');
-				console.log(res.data)
+				// console.log(res.data)
 				if(res.meta.status != 200) return this.$message.error(res.meta.msg)
 				this.menuLists = res.data;
 			}
@@ -139,6 +138,18 @@
 	.el-aside{
 		height: 100%;
 		background: #545c64;
+	}
+	.el-menu .el-button{
+    	width: 100%!important;
+		border-radius:0;
+	}
+	.el-menu .el-button i{
+		font-size: 20px;
+		color: #fff;
+	}
+	.iconfont{
+		color:#fff;
+		margin-right: 10px;
 	}
 	.el-menu{
 		border-right: none!important;
