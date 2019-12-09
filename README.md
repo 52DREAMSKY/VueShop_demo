@@ -1,4 +1,4 @@
-# vue-shopping01
+# vue-shop
 
 ## 项目设置
 ```
