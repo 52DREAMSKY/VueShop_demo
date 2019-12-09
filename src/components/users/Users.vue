@@ -45,7 +45,7 @@
                             <template slot-scope="scope">
                                 <el-button @click='editUserInfo(scope.row.id)' type="danger" icon="el-icon-edit" size="mini">编辑</el-button>
                                 <el-button icon="el-icon-s-tools" type="warning" size="mini">设置角色</el-button>
-                                <el-button type="info" icon="el-icon-delete" size="mini">删除</el-button>
+                                <el-button @click="removeUser(scope.row.id)" type="info" icon="el-icon-delete" size="mini">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -315,7 +315,28 @@ export default {
                     this.getUsersList()
                 })
         },
+        async removeUser(id){
+            // alert(id); 测试当前 id 是否拿到
+            // 弹出删除确认框，确认删除操作
+            const ret = await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).catch(err => err)
+            // 测试返回的是 成功还是失败
+            // console.log(ret);
+            // confirm 是代表成功，点击确认后返回的结果
+            // cancel 是代表失败，点击取消后返回的结果
+            
+            // 判断不成功是 返回一个 取消的提示 
+            if(ret != "confirm") return this.$message.info("取消删除");
 
+            // 调用 api 实现删除操作
+            const { data:res } = await this.$http.delete("users/" + id);
+            if( res.meta.status != 200 ) return this.$message.error("删除失败")
+            this.$message.success("删除成功");
+            this.getUserList();
+        }
 
     }
 };
