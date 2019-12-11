@@ -1,7 +1,6 @@
 <template>
-    <div>
+    <div id="w">
         <h1>欢迎拼日夕友~~~</h1>
-        <!-- <img src="../assets/content.png"> -->
     </div>
 </template>
 
@@ -12,5 +11,9 @@ export default {
 </script>
 
 <style scoped>
-
+    #w{
+        width: 100%;
+        height: 95%;
+        background: url(../assets/bg.png) #B8FCC6;
+    }
 </style>

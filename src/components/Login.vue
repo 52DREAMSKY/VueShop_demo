@@ -88,7 +88,7 @@
 		width: 400px;
 		height: 320px;
 		background-color: #fff;
-	
+		box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
 		position: absolute;
 		left: 50%;
 		top: 50%;
