@@ -30,7 +30,7 @@
                         <el-table-column prop="username" label="姓名"></el-table-column>
                         <el-table-column prop="email" label="邮箱"></el-table-column>
                         <el-table-column prop="mobile" label="电话"></el-table-column>
-                        <el-table-column prop="mobile" label="角色"></el-table-column>
+                        <el-table-column prop="role_name" label="角色"></el-table-column>
                         <el-table-column label="状态">
                             <template slot-scope="scope">
                                 <el-switch
@@ -44,7 +44,7 @@
                         <el-table-column label="操作" width="300">
                             <template slot-scope="scope">
                                 <el-button @click='editUserInfo(scope.row.id)' type="danger" icon="el-icon-edit" size="mini">编辑</el-button>
-                                <el-button icon="el-icon-s-tools" type="warning" size="mini">设置角色</el-button>
+                                <el-button icon="el-icon-s-tools" @click="setRoles(scope.row)" type="warning" size="mini">设置角色</el-button>
                                 <el-button @click="removeUser(scope.row.id)" type="info" icon="el-icon-delete" size="mini">删除</el-button>
                             </template>
                         </el-table-column>
@@ -89,7 +89,7 @@
         </el-dialog>
 
 
-        <!--编辑用户的表单-->
+        <!-- 编辑用户的对话框 -->
         <el-dialog  @close='editClose' title="编辑用户" :visible.sync="editdialogVisible" width="50%">
             <!--表单内容-->
             <el-form :model="editUserForm" :rules="editUserFormRules" ref="editUserFormRef" label-width="70px">
@@ -111,6 +111,29 @@
             <el-button type="primary" @click="editUserSubmit">确 定</el-button>
             </span>
         </el-dialog>
+        
+        <!-- 设置角色对话框 -->
+        <el-dialog  title="设置角色" :visible.sync="setRoledialogVisible" width="30%">
+        <div>
+           <p>当前用户: <el-tag type="info">{{userInfos.username}}</el-tag></p> 
+           <p>当前角色: <el-tag type="info">{{userInfos.role_name}}</el-tag></p>
+           <p>设置新的角色:
+               <el-select v-model="rolesId" placeholder="请选择">
+                    <el-option
+                    v-for="item in roleList"
+                    :key="item.id"
+                    :label="item.roleName"
+                    :value="item.id">
+                    </el-option>
+                </el-select>
+           </p>
+        </div>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="setRoledialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="saveRoles">确 定</el-button>
+        </span>
+        </el-dialog>
+
 
     </div>
 </template>
@@ -153,6 +176,7 @@ export default {
             total: 0,
             // 控制用户对话框的开启和关闭
             dialogVisible: false,
+            setRoledialogVisible:false,
             // 存储当前添加用户的表单数据
             addForm: {
                 username: "",
@@ -204,8 +228,13 @@ export default {
           	mobile:[
           		{ validator:checkMobil, trigger: 'blur' }
           		]
-			}
-        };
+            },
+            // 用户数据
+            userInfos:[],
+            // 角色列表
+            roleList:[],
+            rolesId:''
+        }
     },
     created() {
         this.getUserList();
@@ -225,7 +254,7 @@ export default {
             this.userList = res.data.users;
             this.total = res.data.total;
         },
-
+        
         // 修改状态事件
         async stateChange(datas) {
             // 请求到 users 改变服务端状态
@@ -336,8 +365,48 @@ export default {
             if( res.meta.status != 200 ) return this.$message.error("删除失败")
             this.$message.success("删除成功");
             this.getUserList();
+        },
+        // 设置角色获取的方法
+        async setRoles(role){
+            // alert(1)
+            // 将用户数据传入 userInfos
+            this.userInfos = role;
+            // 开关设置角色对话框
+            this.setRoledialogVisible = true;
+            // 发送ajax 获取角色数据
+            const {data:res} = await this.$http.get('roles');
+            // console.log(res);
+            // 判断角色数据是否获取失败
+            if(res.meta.status != 200){
+                return this.$message.error('获取失败')
+            }
+            // 将获取的角色数据传入roleList
+            this.roleList = res.data;
+            console.log(this.roleList)
+        },
+        async saveRoles(roles){
+            // 判断当前下拉框是否为空
+            if(!this.rolesId){
+                return this.$message.info("请选择角色");
+            }
+            const {data:res} = await this.$http.put(`users/${this.userInfos.id}/role`,{
+                rid:this.rolesId
+            });
+            // 判断是否设置角色失败
+            if(res.meta.status !== 200){
+                return this.$message.error('设置角色失败')
+            }
+            // 
+            this.$message.success('成功设置角色为：' + this.userInfos.role_name);
+            // 将数据渲染到页面
+            this.getUserList();
+            // 开关设置角色对话框
+            this.setRoledialogVisible = false;
+        },
+        // 关闭确定后关闭对话框，清除已选择的角色选择选项
+        setRolesClose(){
+            this.rolesId = '';
         }
-
     }
 };
 </script>

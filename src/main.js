@@ -6,6 +6,8 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 import '../public/font/iconfont.css'
 import axios from 'axios'
+import ZkTable from 'vue-table-with-tree-grid'
+Vue.component('tree', ZkTable)
 
 Vue.config.productionTip = false
 Vue.use(ElementUI);
