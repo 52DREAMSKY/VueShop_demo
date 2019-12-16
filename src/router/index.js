@@ -9,6 +9,7 @@ import Rights from '../components/power/Rights.vue'
 import Roles from '../components/power/Roles.vue'
 import Cate from '../components/goods/Cate.vue'
 import Goodslist from '../components/goods/Goodslist.vue'
+import Params from '../components/goods/Params.vue'
 
 
 const routes = [
@@ -25,12 +26,13 @@ const routes = [
 			{path:"/roles",component:Roles},
 			{path:"/categories",component:Cate},
 			{path:"/goods",component:Goodslist},
+			{path:"/params",component:Params},
 		]
 	},
 ]
 
 const router = new VueRouter({
-  routes
+	routes
 })
 
 // 路由导航守卫
