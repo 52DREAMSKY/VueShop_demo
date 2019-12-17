@@ -30,13 +30,30 @@
             @click="addParamsdialogVisible=true"
           >添加参数</el-button>
           <el-table :data="manyParamsList" border>
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+                <!-- 添加标签参数 -->
+                <template slot-scope="scope">
+                  <el-tag closable v-for="(item,i) in scope.row.attr_vals" @close="handleClose(i,scope.row)" :key="i">
+                    {{item}}
+                  </el-tag>
+                  <el-input
+                  class="input-new-tag"
+                  v-if="inputVisible"
+                  v-model="inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)">
+                </el-input>
+                <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+                </template>
+            </el-table-column>
             <el-table-column type="index" label="#"></el-table-column>
             <el-table-column label="参数名称" prop="attr_name"></el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
-                <el-button type="warning" icon="el-icon-delete" size="mini">删除</el-button>
+                <el-button type="danger" icon="el-icon-edit" size="mini">编辑</el-button>
+                <el-button type="info" icon="el-icon-delete" size="mini">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -50,13 +67,20 @@
             @click="addParamsdialogVisible=true"
           >添加属性</el-button>
           <el-table :data="onlyParamsList" border>
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+                <!-- 添加标签参数 -->
+                <template slot-scope="scope">
+                  <el-tag @close="handleClose(i,scope.row)" closable v-for="(item,i) in scope.row.attr_vals" :key="i">
+                    {{item}}
+                  </el-tag>
+                </template>
+            </el-table-column>
             <el-table-column type="index" label="#"></el-table-column>
             <el-table-column label="属性名称" prop="attr_name"></el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
-                <el-button type="warning" icon="el-icon-delete" size="mini">删除</el-button>
+                <el-button type="danger" icon="el-icon-edit" size="mini">编辑</el-button>
+                <el-button type="info" icon="el-icon-delete" size="mini">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -71,8 +95,8 @@
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-        <el-button @click="addParamsdialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addParamsdialogVisible = false">确 定</el-button>
+        <el-button type="info" @click="addParamsdialogVisible = false">取 消</el-button>
+        <el-button type="danger" @click="addParamsdialogVisible = false">确 定</el-button>
         </span>
     </el-dialog>
   </div>
@@ -108,7 +132,10 @@ export default {
       //校验规则
       addParamsFormrules: {
         attr_name: [{ required: true, message: "请输入名称", trigger: "blur" }]
-      }
+      },
+      // 标签参数输入框显示
+      inputVisible:false,
+			inputValue:'',
     };
   },
   methods: {
@@ -119,7 +146,7 @@ export default {
         return this.$message.error("获取失败");
       }
       this.cateList = res.data;
-      console.log(this.cateList);
+      // console.log(this.cateList);
     },
     //tabs标签页发生改变的事件
     handleTabsClick() {
@@ -129,9 +156,12 @@ export default {
     async handleCascaderChange() {
       this.getParamsList();
     },
+    //获取参数的方法
     async getParamsList() {
       if (this.cascaderKey.length !== 3) {
         this.cascaderKey = [];
+        this.manyParamsList = [];
+        this.onlyParamsList = [];
         return;
       }
       //获取参数
@@ -150,7 +180,48 @@ export default {
       } else {
         this.onlyParamsList = res.data;
       }
+      // 遍历渲染 res.data 中的 attr_vals 并将以空格分隔的字符串转换成数组
+      res.data.forEach( item=>{
+        item.attr_vals = item.attr_vals.split(' ')
+      })
+    },
+    // 删除展开行的参数
+    async handleClose(i,row){
+      row.attr_vals.splice(i,1);
+      this.updataList(row);
+    },
+    // 更新展开行参数方法
+    async updataList(row){
+      const {data:res} = await this.$http.put(`categories/${this.getCateId}/attributes/${row.attr_id}`,{
+        attr_name:row.attr_name,
+        attr_sel:row.attr_sel,
+        attr_vals:row.attr_vals.join(' ')
+      })
+      if(res.meta.status != 200 ){
+        return this.$message.error('更新失败')
+      }
+      this.$message.success('更新成功')
+      console.log(res.data);
+    },
+    async handleInputConfirm(row){
+      console.log("123123")
+      if ( this.inputValue.trim().length === 0  ) {
+        this.inputVisible = false;
+        this.inputValue = ''
+        return;
+      }
+      row.attr_vals.push(this.inputValue.trim());
+      this.inputVisible = false;
+      this.inputValue = ''
+      this.updataList(row);
+    },
+    showInput(){
+      this.inputVisible = true;
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
     }
+
   },
   created() {
     this.getcateList();
@@ -184,4 +255,6 @@ export default {
     .el-input__inner{margin-left: 20px;}
     .el-tabs{margin: 20px; }
     .el-dialog input{ width: 80%; }
+    .el-tag{margin: 10px;}
+    .input-new-tag{width: 150px;}
 </style>
