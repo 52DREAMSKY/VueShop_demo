@@ -24,6 +24,7 @@ axios.interceptors.request.use( config =>{
 // 挂载 axios 到Vue实例的原型对象上，可以直接使用, this.$http
 Vue.prototype.$http = axios;
 
+
 new Vue({
   router,
   render: h => h(App)

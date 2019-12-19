@@ -10,7 +10,9 @@ import Roles from '../components/power/Roles.vue'
 import Cate from '../components/goods/Cate.vue'
 import Goodslist from '../components/goods/Goodslist.vue'
 import Params from '../components/goods/Params.vue'
-
+import Add from '../components/goods/Add.vue'
+import Orders from '../components/orders/Orders.vue'
+import Reports from '../components/reports/Reports.vue'
 
 const routes = [
 	{path:'/',redirect:'/login'},
@@ -27,6 +29,9 @@ const routes = [
 			{path:"/categories",component:Cate},
 			{path:"/goods",component:Goodslist},
 			{path:"/params",component:Params},
+			{path:"/goods/add",component:Add},			
+			{path:"/orders",component:Orders},
+			{path:"/reports",component:Reports}	
 		]
 	},
 ]

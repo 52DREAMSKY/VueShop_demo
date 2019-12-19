@@ -251,7 +251,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
     .el-input__inner{margin-left: 20px;}
     .el-tabs{margin: 20px; }
     .el-dialog input{ width: 80%; }

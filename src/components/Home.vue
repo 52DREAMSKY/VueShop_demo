@@ -35,7 +35,7 @@
 							<i :class="listIcon[item.id]"></i>
 							<span>{{item.authName}}</span>
 						</template>
-						<el-menu-item :index="subItem.path+''" v-for="subItem in item.children" :key="subItem.id">
+						<el-menu-item :index="subItem.path+''"  v-for="subItem in item.children" :key="subItem.id" >
 							<template slot="title">
 								<span>{{subItem.authName}}</span>
 						</template>
@@ -86,7 +86,11 @@
 				// console.log(res.data)
 				if(res.meta.status != 200) return this.$message.error(res.meta.msg)
 				this.menuLists = res.data;
-			}
+			},
+			// svaepath(){
+			// 	window.sessionStorage.setItem("path",path)
+			// 	this.path = path
+			// }
 		}
 		
   }
